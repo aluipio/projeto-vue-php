@@ -10,9 +10,10 @@ Projeto de testes, executando VUE diretamente no HTML, consumindo API em PHP+MyS
 ## Para executar o projeto
 
 1. Executar o Apache com MySQL;
-2. Carregar sql, criando DB e Tabela;
+2. Carregue o arquivo SQL, criando DB e Tabela de teste;
 3. Verifique o endereço de consumo da API no script JS dentro do HTML;
-4. Executar o arquivo index.html em browser.
+4. Executar o arquivo index.html em browser;
+5. Clique no botão amarelo "Teste de Resposta", para certificar que o VueJS está rodando corretamente.
 
 ## Links Úteis
 

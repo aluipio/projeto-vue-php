@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue - PHP - BootStrap</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">VUE + PHP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Disabled</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Buscar</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app" class="container mt-5 pt-5">
+        <!-- Mensagem -->
+        <div class="alert alert-danger" v-if="errorMsg">
+            {{ errorMsg }}
+        </div>
+        <div class="alert alert-success" v-if="successMsg">
+            {{ successMsg }}
+        </div>
+
+        <!-- Jumbox -->
+        <div class="bg-light p-5 rounded mb-5">
+            <h3>Teste VUE + PHP + MySQL</h3>
+            <p class="lead">Descrição da Apresentação. - {{ message }}</p>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adicionar">
+                + Adicionar
+            </button>
+            <button type="button" class="btn btn-success m-4" @click="say('Funcionou'); getAllUsers();">
+                Teste de Resposta
+            </button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="adicionar" tabindex="-1" aria-labelledby="adicionarLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="adicionarLabel">Adicionar Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="#" method="post">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="adicionarName" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="adicionarName" aria-describedby="Nome"
+                                    name="name" v-model="newUser.name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="adicionarEmail" class="form-label">Email</label>
+                                <input type="text" class="form-control" id="adicionarEmail" aria-describedby="Email"
+                                    name="email" v-model="newUser.email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="adicionarPhone" class="form-label">Telefone</label>
+                                <input type="text" class="form-control" id="adicionarPhone" aria-describedby="Telefone"
+                                    name="phone" v-model="newUser.phone">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                                @click="addUser();">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="editar" tabindex="-1" aria-labelledby="editarLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarLabel">Editar Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="#" method="post">
+                        <input type="hidden" id="editarId" name="id" value="">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="editarName" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="editarName" aria-describedby="Nome"
+                                    name="name" v-model="currentUser.name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editarEmail" class="form-label">Email</label>
+                                <input type="text" class="form-control" id="editarEmail" aria-describedby="Email"
+                                    name="email" v-model="currentUser.email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editarPhone" class="form-label">Telefone</label>
+                                <input type="email" class="form-control" id="editarPhone" aria-describedby="Telefone"
+                                    name="phone" v-model="currentUser.phone">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-success" @click="updateUser();"
+                                data-bs-dismiss="modal">Salvar Edição</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="deletar" tabindex="-1" aria-labelledby="deletarLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deletarLabel">Deletar Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+                            <h4 class="mb-3">
+                                Deseja realmente apagar o registro?
+                            </h4>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                            <button type="button" class="btn btn-danger" @click="deleteUser();"
+                                data-bs-dismiss="modal">Sim</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Displaying Records -->
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="text-center bg-info text-light">
+                            <th scope="col">#</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Handle</th>
+                            <th scope="col">Editar</th>
+                            <th scope="col">Apagar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="text-center" v-for="user in users">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone }}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editar" @click="selectUser(user);">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deletar" @click="selectUser(user);">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+                data-bs-delay="2000">
+                <div class="toast-header">
+                    <img src="/lkj.png" class="rounded me-2" alt="teste">
+                    <strong class="me-auto">Bootstrap</strong>
+                    <small>11 mins ago</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    Hello, world! This is a toast message.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+    <script>
+        // src="https://unpkg.com/vue@3"
+        /* <script src="https://cdn.jsdelivr.net/npm/vue"><\/script> */
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.0/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+
+
+    <script type="text/javascript">
+        const VueProjeto = Vue.createApp({
+            data() {
+                return {
+                    errorMsg: "",
+                    successMsg: "",
+                    message: 'Hello Vue!',
+                    users: [],
+                    newUser: { name: "", email: "", phone: "" },
+                    currentUser: { name: "", email: "", phone: "" }
+                }
+            },
+            mounted() {
+                this.getAllUsers();
+                /*
+                setInterval(() => {
+                    console.log(users);
+                    console.log(this.users);
+                }, 5000);*/
+            },
+            methods: {
+                async getAllUsers() {
+                    let obj = this; // Carrega o projeto VueProjeto
+                    let resultado = await axios.get("http://localhost/cursos/dio-desafio-github/vue_php/api.php",
+                        { params: { 'action': 'read' } })
+                        .then(function (response) {
+                            if (response.data.error) {
+                                obj.errorMsg = response.data.message;
+                            } else {
+                                obj.users = response.data.usuarios;
+                            }
+                        });
+                },
+                say(message) {
+                    alert(message)
+                },
+                async addUser() {
+                    let obj = this; // Carrega o projeto VueProjeto
+                    var formData = this.toFormData(this.newUser);
+                    let resultado = await axios.post("http://localhost/cursos/dio-desafio-github/vue_php/api.php?action=create", formData)
+                        .then(function (response) {
+                            if (response.data.error) {
+                                obj.errorMsg = response.data.message;
+                            } else {
+                                obj.successMsg = response.data.message;
+                                obj.newUser = { name: "", email: "", phone: "" };
+                                obj.getAllUsers();
+                            }
+                        });
+                },
+                async updateUser() {
+                    let obj = this; // Carrega o projeto VueProjeto
+                    var formData = this.toFormData(this.currentUser);
+                    let resultado = await axios.post("http://localhost/cursos/dio-desafio-github/vue_php/api.php?action=update", formData)
+                        .then(function (response) {
+                            if (response.data.error) {
+                                obj.errorMsg = response.data.message;
+                            } else {
+                                obj.successMsg = response.data.message;
+                                obj.currentUser = { name: "", email: "", phone: "" };
+                                obj.getAllUsers();
+                            }
+                        });
+                },
+                async deleteUser() {
+                    let obj = this; // Carrega o projeto VueProjeto
+                    var formData = this.toFormData(this.currentUser);
+                    let resultado = await axios.post("http://localhost/cursos/dio-desafio-github/vue_php/api.php?action=delete", formData)
+                        .then(function (response) {
+                            if (response.data.error) {
+                                obj.errorMsg = response.data.message;
+                            } else {
+                                obj.successMsg = response.data.message;
+                                obj.currentUser = { name: "", email: "", phone: "" };
+                                obj.getAllUsers();
+                            }
+                        });
+                },
+                toFormData(obj) {
+                    var fd = new FormData();
+                    for (var i in obj) {
+                        fd.append(i, obj[i]);
+                    }
+                    return fd;
+                },
+                selectUser(user) {
+                    this.currentUser = user;
+                }
+            }
+        }).mount('#app');
+    </script>
+
+</body>
+
+</html>
